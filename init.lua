@@ -708,6 +708,8 @@ require('lazy').setup({
         -- ts_ls = {},
         --
 
+        gopls = {},
+
         lua_ls = {
           -- cmd = { ... },
           -- filetypes = { ... },
