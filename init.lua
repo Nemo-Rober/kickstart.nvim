@@ -262,6 +262,7 @@ rtp:prepend(lazypath)
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'NMAC427/guess-indent.nvim', -- Detect tabstop and shiftwidth automatically
+  'mfussenegger/nvim-lint',
 
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
@@ -796,6 +797,13 @@ require('lazy').setup({
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
+      require("lspconfig").golangci_lint_ls.setup({
+        cmd = { "golangci-lint-langserver" },
+        init_options = {
+          command = { "/home/nemorober/.asdf/shims/golangci-lint", "run", "--out-format=json" }
+        },
+      })
+
       require('mason-lspconfig').setup {
         ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
         automatic_installation = false,
@@ -845,6 +853,7 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        go = { 'goimports', 'golangci-lint' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
