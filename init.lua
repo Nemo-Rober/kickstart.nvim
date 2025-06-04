@@ -93,6 +93,11 @@ vim.g.maplocalleader = ','
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
 
+-- disable netrw at the very start of your init.lua
+-- required for nvim-tree
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
 -- [[ Setting options ]]
 -- See `:help vim.o`
 -- NOTE: You can change these options as you wish!
@@ -291,6 +296,17 @@ require('lazy').setup({
         changedelete = { text = '~' },
       },
     },
+  },
+
+  -- file navigation using nvim-tree
+  {
+    "nvim-tree/nvim-tree.lua",
+    config = function()
+      vim.keymap.set('n', '<leader>e', ':NvimTreeToggle<CR>', {
+        noremap = true
+      })
+      require("nvim-tree").setup()
+    end
   },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
