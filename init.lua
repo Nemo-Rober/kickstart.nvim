@@ -173,7 +173,6 @@ vim.o.scrolloff = 10
 -- See `:help 'confirm'`
 vim.o.confirm = true
 
-
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -208,12 +207,20 @@ vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 -- vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
 -- use a function to move to a split OR create a new split if there isn't one yet
-local fn = require('functions')
+local fn = require 'functions'
 
-vim.keymap.set('n', '<C-h>', function() fn.win_move('h') end, { silent = true })
-vim.keymap.set('n', '<C-j>', function() fn.win_move('j') end, { silent = true })
-vim.keymap.set('n', '<C-k>', function() fn.win_move('k') end, { silent = true })
-vim.keymap.set('n', '<C-l>', function() fn.win_move('l') end, { silent = true })
+vim.keymap.set('n', '<C-h>', function()
+  fn.win_move 'h'
+end, { silent = true })
+vim.keymap.set('n', '<C-j>', function()
+  fn.win_move 'j'
+end, { silent = true })
+vim.keymap.set('n', '<C-k>', function()
+  fn.win_move 'k'
+end, { silent = true })
+vim.keymap.set('n', '<C-l>', function()
+  fn.win_move 'l'
+end, { silent = true })
 
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
@@ -323,7 +330,7 @@ require('lazy').setup({
             statusline = 100,
             tabline = 100,
             winbar = 100,
-          }
+          },
         },
         sections = {
           lualine_a = {},
@@ -331,7 +338,7 @@ require('lazy').setup({
           lualine_c = { 'filename' },
           lualine_x = {},
           lualine_y = {},
-          lualine_z = {}
+          lualine_z = {},
         },
         inactive_sections = {
           lualine_a = {},
@@ -339,24 +346,24 @@ require('lazy').setup({
           lualine_c = { 'filename' },
           lualine_x = { 'location' },
           lualine_y = {},
-          lualine_z = {}
+          lualine_z = {},
         },
         tabline = {},
         winbar = {},
         inactive_winbar = {},
-        extensions = {}
+        extensions = {},
       }
-    end
+    end,
   },
   -- file navigation using nvim-tree
   {
-    "nvim-tree/nvim-tree.lua",
+    'nvim-tree/nvim-tree.lua',
     config = function()
       vim.keymap.set('n', '<leader>e', ':NvimTreeToggle<CR>', {
-        noremap = true
+        noremap = true,
       })
-      require("nvim-tree").setup()
-    end
+      require('nvim-tree').setup()
+    end,
   },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
@@ -373,7 +380,7 @@ require('lazy').setup({
   -- Then, because we use the `opts` key (recommended), the configuration runs
   -- after the plugin has been loaded as `require(MODULE).setup(opts)`.
 
-  {                     -- Useful plugin to show you pending keybinds.
+  { -- Useful plugin to show you pending keybinds.
     'folke/which-key.nvim',
     event = 'VimEnter', -- Sets the loading event to 'VimEnter'
     opts = {
@@ -425,6 +432,39 @@ require('lazy').setup({
       },
     },
   },
+  {
+    'diepm/vim-rest-console',
+    ft = 'http',
+    init = function()
+      -- Filetype detection
+      vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufRead', 'BufReadPost' }, {
+        pattern = '*.http',
+        callback = function()
+          vim.bo.syntax = 'rest'
+          vim.bo.filetype = 'rest'
+        end,
+      })
+
+      -- Global settings
+      vim.g.vrc_trigger = '<leader>vrc'
+      vim.g.vrc_curl_opts = {
+        ['-L'] = '',
+        ['-i'] = '',
+        ['-s'] = '',
+        ['-k'] = '',
+      }
+    end,
+
+    config = function()
+      -- Buffer-local setting: set default response content type
+      vim.api.nvim_create_autocmd('FileType', {
+        pattern = 'rest',
+        callback = function()
+          vim.b.vrc_response_default_content_type = 'application/json'
+        end,
+      })
+    end,
+  },
 
   -- NOTE: Plugins can specify dependencies.
   --
@@ -453,7 +493,7 @@ require('lazy').setup({
       { 'nvim-telescope/telescope-ui-select.nvim' },
 
       -- Useful for getting pretty icons, but requires a Nerd Font.
-      { 'nvim-tree/nvim-web-devicons',            enabled = vim.g.have_nerd_font },
+      { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
     },
     config = function()
       -- Telescope is a fuzzy finder that comes with a lot of different things that
@@ -490,8 +530,7 @@ require('lazy').setup({
         --
         pickers = {
           find_files = {
-            hidden = true
-
+            hidden = true,
           },
         },
         extensions = {
@@ -503,15 +542,15 @@ require('lazy').setup({
         defaults = {
           mappings = {
             i = {
-              ["<C-j>"] = require("telescope.actions").move_selection_next,
-              ["<C-k>"] = require("telescope.actions").move_selection_previous,
+              ['<C-j>'] = require('telescope.actions').move_selection_next,
+              ['<C-k>'] = require('telescope.actions').move_selection_previous,
               -- uncomment to enable search history cycling
               -- ["<C-h>"] = require("telescope.actions").cycle_history_prev,
               -- ["<C-l>"] = require("telescope.actions").cycle_history_next,
             },
             n = {
-              ["<C-j>"] = require("telescope.actions").move_selection_next,
-              ["<C-k>"] = require("telescope.actions").move_selection_previous,
+              ['<C-j>'] = require('telescope.actions').move_selection_next,
+              ['<C-k>'] = require('telescope.actions').move_selection_previous,
             },
           },
         },
@@ -584,7 +623,7 @@ require('lazy').setup({
       'WhoIsSethDaniel/mason-tool-installer.nvim',
 
       -- Useful status updates for LSP.
-      { 'j-hui/fidget.nvim',    opts = {} },
+      { 'j-hui/fidget.nvim', opts = {} },
 
       -- Allows extra capabilities provided by blink.cmp
       'saghen/blink.cmp',
@@ -821,12 +860,12 @@ require('lazy').setup({
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
-      require("lspconfig").golangci_lint_ls.setup({
-        cmd = { "golangci-lint-langserver" },
+      require('lspconfig').golangci_lint_ls.setup {
+        cmd = { 'golangci-lint-langserver' },
         init_options = {
-          command = { "/home/nemorober/.asdf/shims/golangci-lint", "run", "--out-format=json" }
+          command = { '/home/nemorober/.asdf/shims/golangci-lint', 'run', '--out-format=json' },
         },
-      })
+      }
 
       require('mason-lspconfig').setup {
         ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
@@ -1013,7 +1052,7 @@ require('lazy').setup({
     priority = 1000,
     config = function()
       require('nordic').load()
-    end
+    end,
   },
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
