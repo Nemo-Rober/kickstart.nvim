@@ -198,7 +198,7 @@ vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
 vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
 -- uuid generator
-vim.keymap.set('n', '<leader>u', function()
+vim.keymap.set('n', '<leader>U', function()
   local uuid = vim.fn.system('uuidgen'):gsub('\n', '')
   vim.api.nvim_put({ uuid }, 'c', true, true)
 end, { noremap = true, silent = true })
