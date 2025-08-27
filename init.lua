@@ -121,6 +121,8 @@ vim.o.mouse = 'a'
 vim.o.showmode = false
 
 vim.o.foldmethod = 'indent'
+vim.o.foldlevel = 99
+vim.o.foldlevelstart = 99
 
 -- Sync clipboard between OS and Neovim.
 --  Schedule the setting after `UiEnter` because it can increase startup-time.
@@ -871,13 +873,6 @@ require('lazy').setup({
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
-      require('lspconfig').golangci_lint_ls.setup {
-        cmd = { 'golangci-lint-langserver' },
-        init_options = {
-          command = { '/home/nemorober/.asdf/shims/golangci-lint', 'run', '--out-format=json' },
-        },
-      }
-
       require('mason-lspconfig').setup {
         ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
         automatic_installation = false,
@@ -894,7 +889,21 @@ require('lazy').setup({
       }
     end,
   },
-
+  -- setup null_ls linter with custom binaries instead of lsp
+  {
+    'nvimtools/none-ls.nvim', -- successor to null-ls.nvim
+    config = function()
+      local null_ls = require 'null-ls'
+      null_ls.setup {
+        sources = {
+          null_ls.builtins.diagnostics.golangci_lint.with {
+            command = '/home/nemorober/code/alm/floworchestrator/bin/golangci-lint',
+            args = { 'run', '--out-format=json', '--issues-exit-code=1' },
+          },
+        },
+      }
+    end,
+  },
   { -- Autoformat
     'stevearc/conform.nvim',
     event = { 'BufWritePre' },
@@ -927,9 +936,9 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
-        go = { 'goimports', 'golangci-lint' },
+        go = { 'goimports', 'gofumpt', 'golines' },
         -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
+        -- python = { "", "black" },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
         -- javascript = { "prettierd", "prettier", stop_after_first = true },
